@@ -1,0 +1,10 @@
+{
+  "modid": "looter-sts",
+  "name": "LooterMod",
+  "author_list": ["Billdoom"],
+  "description": "Adds a procedural card-creation system and character.",
+  "dependencies": ["basemod"],
+  "version": "0.0.1",
+  "sts_version": "06-28-2018",
+  "update_json": "https://api.github.com/repos/billdoom/StS-Looter/releases/latest"
+}
