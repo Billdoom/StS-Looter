@@ -4,6 +4,7 @@ import com.megacrit.cardcrawl.random.Random;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 public class WeightedList<T> {
 
@@ -43,13 +44,21 @@ public class WeightedList<T> {
     }
 
     public T get(Random random) {
+        if (options.isEmpty()) {
+            return null;
+        }
         int roll = random.random(totalWeight);
         Iterator<WeightedOption> optionIterator = options.iterator();
         WeightedOption option = optionIterator.next();
-        while (roll > 0) {
+        while (roll > option.weight) {
             roll -= option.weight;
-            optionIterator.next();
+            option = optionIterator.next();
         }
         return option.option;
+    }
+
+    public T get(Random random, Predicate<T> filter) {
+        WeightedList<T> filteredList = new WeightedList<>((WeightedOption[])options.stream().filter(o -> filter.test(o.option)).toArray());
+        return filteredList.get(random);
     }
 }

@@ -6,8 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$/lib" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="lib" level="project" />
   </component>
 </module>

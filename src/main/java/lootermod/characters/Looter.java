@@ -21,11 +21,24 @@ public class Looter extends CustomPlayer {
     public static final String MY_CHARACTER_SKELETON_JSON = "img/char/idle/skeleton.json"; // spine animation json
     private static final int START_GOLD = 150;
     private static final int CARD_DRAW = 5;
+    public static final String[] orbs = {
+            "img/orbs/empty2.png",
+            "img/orbs/empty2.png",
+            "img/orbs/empty2.png",
+            "img/orbs/empty2.png",
+            "img/orbs/empty2.png",
+            "img/orbs/empty2.png",
+            "img/orbs/empty2.png",
+            "img/orbs/empty2.png",
+            "img/orbs/empty2.png",
+            "img/orbs/empty2.png",
+            "img/orbs/empty2.png"
+    };
 
     public Looter(String name, PlayerClass chosenClass) {
-        super(name, chosenClass, null, null, (String)null, null);
+        super(name, chosenClass, orbs, "img/orbs/empty2.png", (String)null, null);
 
-        this.initializeClass(null, MY_CHARACTER_SHOULDER_2, MY_CHARACTER_SHOULDER_1, MY_CHARACTER_CORPSE,
+        this.initializeClass(MY_CHARACTER_SHOULDER_1, MY_CHARACTER_SHOULDER_2, MY_CHARACTER_SHOULDER_1, MY_CHARACTER_CORPSE,
                 getLoadout(), 20.0f, -10.0f, 220.0f, 290.0f, new EnergyManager(ENERGY_PER_TURN));
 
         this.loadAnimation(MY_CHARACTER_SKELETON_ATLAS, MY_CHARACTER_SKELETON_JSON, 1.0f);
@@ -41,6 +54,10 @@ public class Looter extends CustomPlayer {
 
     public static ArrayList<String> getStartingDeck() {
         ArrayList<String> cards = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            cards.add("looter:"+(i+1));
+        }
 
         return cards;
     }

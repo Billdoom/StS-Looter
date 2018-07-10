@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="take2">
+    <output-path>C:/Program Files (x86)/Steam/steamapps/common/SlayTheSpire/mods</output-path>
+    <root id="root">
+      <element id="archive" name="looter.jar">
+        <element id="dir-copy" path="$PROJECT_DIR$/build/production/StS-Looter" />
+        <element id="dir-copy" path="$PROJECT_DIR$/src/main/resources" />
+      </element>
+    </root>
+  </artifact>
+</component>
