@@ -31,6 +31,7 @@ public class CardGenerator {
     }
 
     public LooterCard generateAttack(AbstractCard.CardRarity rarity) {
+        LooterMod.logger.info("Generating a "+rarity.name()+" attack");
         return attackGenerator.generate(rarity, r);
     }
 }

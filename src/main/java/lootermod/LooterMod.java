@@ -65,7 +65,7 @@ public class LooterMod implements EditCharactersSubscriber,
 
     @Override
     public void receiveEditCards() {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 60; i++) {
             BaseMod.addCard(CardGenerator.get().generateAttack());
         }
     }

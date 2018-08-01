@@ -44,13 +44,24 @@ public class LooterCard extends CustomCard {
         return this;
     }
 
+    private List<CardEffect> selfEffects = new LinkedList<>();
+
+    public LooterCard addSelfEffect(CardEffect effect) {
+        selfEffects.add(effect);
+        return this;
+    }
+
     @Override
     public AbstractCard makeCopy() {
         LooterCard copy = new LooterCard(this.cardID, name, null, cost, rawDescription, type, rarity, target);
         copy.effects = this.effects;
+        copy.selfEffects = this.selfEffects;
         copy.enemySelectionScheme = this.enemySelectionScheme;
         copy.baseDamage = this.baseDamage;
         copy.baseBlock = this.baseBlock;
+        copy.baseDiscard = this.baseDiscard;
+        copy.isEthereal = this.isEthereal;
+        copy.exhaust = this.exhaust;
         return copy;
     }
 
@@ -70,6 +81,10 @@ public class LooterCard extends CustomCard {
             for (CardEffect effect : effects) {
                 effect.applyEffect(player, target, this);
             }
+        }
+
+        for (CardEffect effect : selfEffects) {
+            effect.applyEffect(player, player, this);
         }
     }
 }

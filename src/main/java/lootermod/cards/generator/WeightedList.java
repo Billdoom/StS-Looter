@@ -34,6 +34,11 @@ public class WeightedList<T> {
         totalWeight += weight;
     }
 
+    public void addOption(WeightedOption option) {
+        this.options.add(option);
+        totalWeight += option.weight;
+    }
+
     public static <Z> WeightedList<Z> of(Z item1, int weight1, Object... remaining) {
         WeightedList<Z> list = new WeightedList<>();
         list.addOption(item1, weight1);
@@ -58,7 +63,8 @@ public class WeightedList<T> {
     }
 
     public T get(Random random, Predicate<T> filter) {
-        WeightedList<T> filteredList = new WeightedList<>((WeightedOption[])options.stream().filter(o -> filter.test(o.option)).toArray());
+        final WeightedList<T> filteredList = new WeightedList<>();
+        options.stream().filter(o -> filter.test(o.option)).forEach(o-> filteredList.addOption(o));
         return filteredList.get(random);
     }
 }

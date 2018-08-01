@@ -19,9 +19,9 @@ public class AttackGenerator {
         new TargetType(AbstractCard.CardTarget.ENEMY,
                 1.0f, "", null), 60,
         new TargetType(AbstractCard.CardTarget.ALL_ENEMY,0.8f,
-                " to ALL enemies", this::allMonsters), 15,
-            new TargetType(AbstractCard.CardTarget.ALL_ENEMY, 1.4f,
-                    " to a random enemy", this::randomMonster), 12
+            " to ALL enemies", this::allMonsters), 15,
+        new TargetType(AbstractCard.CardTarget.ALL_ENEMY, 1.4f,
+            " to a random enemy", this::randomMonster), 12
     );
 
     private WeightedList<DamageOption> damageOptions = WeightedList.of(
@@ -30,10 +30,12 @@ public class AttackGenerator {
         new DamageOption(DamageType.COLD, 3), 10,
         new DamageOption(DamageType.LIGHTNING, 2.3f), 10,
         new DamageOption(DamageType.PIERCING, 2.2f), 5,
-        new DamageOption(DamageType.POISON, 3.5f), 5
+        new DamageOption(DamageType.POISON, 3.3f), 5
     );
 
     private Map<AbstractCard.CardRarity, Range> qualityPointsByRarity;
+    private Map<AbstractCard.CardRarity, WeightedList<Integer>> drawbacksByRarity;
+    private Map<AbstractCard.CardRarity, WeightedList<Float>> bonusPctByRarity;
 
     public AttackGenerator() {
         qualityPointsByRarity = new HashMap<>();
@@ -41,6 +43,43 @@ public class AttackGenerator {
         qualityPointsByRarity.put(AbstractCard.CardRarity.COMMON, new Range(14, 16));
         qualityPointsByRarity.put(AbstractCard.CardRarity.UNCOMMON, new Range(15, 20));
         qualityPointsByRarity.put(AbstractCard.CardRarity.RARE, new Range(22, 30));
+
+        drawbacksByRarity = new HashMap<>();
+        drawbacksByRarity.put(AbstractCard.CardRarity.COMMON, WeightedList.of(
+            0, 50,
+            1, 30
+        ));
+        drawbacksByRarity.put(AbstractCard.CardRarity.UNCOMMON, WeightedList.of(
+            0, 50,
+            1, 50,
+            2, 10
+        ));
+        drawbacksByRarity.put(AbstractCard.CardRarity.RARE, WeightedList.of(
+            0, 30,
+            1, 50,
+            2, 20,
+            3, 5
+        ));
+
+        bonusPctByRarity = new HashMap<>();
+        bonusPctByRarity.put(AbstractCard.CardRarity.COMMON, WeightedList.of(
+            0f, 50,
+            0.3f, 10,
+            0.5f, 5
+        ));
+        bonusPctByRarity.put(AbstractCard.CardRarity.UNCOMMON, WeightedList.of(
+            0f, 40,
+            0.2f, 20,
+            0.35f, 10,
+            0.6f, 5
+        ));
+        bonusPctByRarity.put(AbstractCard.CardRarity.RARE, WeightedList.of(
+            0.15f, 20,
+            0.2f, 20,
+            0.3f, 10,
+            0.4f, 10,
+            0.7f, 5
+        ));
     }
 
     public LooterCard generate(AbstractCard.CardRarity rarity, Random r) {
@@ -50,14 +89,47 @@ public class AttackGenerator {
         TargetType targetType = targetTypes.get(r);
         DamageOption damageOption = damageOptions.get(r);
 
-        int damage = (int)Math.ceil(qualityPoints * targetType.damageScale
-                / damageOption.qualityPerDmg);
+        List<Drawback> drawbacks = Drawback.getDrawbacks(AbstractCard.CardType.ATTACK,
+            drawbacksByRarity.get(rarity).get(r), r);
 
         StringBuilder desc = new StringBuilder();
 
         desc.append("Deal !D!").append(damageOption.damageType.keyword)
                 .append(" damage").append(targetType.description)
-                .append(".");
+                .append(". NL ");
+
+        double drawbackBonusMod = Math.pow(0.8, drawbacks.size() - 1);
+
+        for (Drawback drawback : drawbacks) {
+            qualityPoints += drawback.qualityPoints * drawbackBonusMod;
+        }
+
+        qualityPoints *= targetType.damageScale;
+
+        float pctBonuses = bonusPctByRarity.get(rarity).get(r);
+
+        List<Bonus> bonuses = Bonus.getBonuses(AbstractCard.CardType.ATTACK,
+            (int)Math.ceil(qualityPoints * pctBonuses), r, drawbacks);
+
+        boolean hasBonusDesc = false;
+
+        for (Bonus bonus : bonuses) {
+            String bonusDesc = bonus.getDescription();
+            hasBonusDesc |= ! bonusDesc.isEmpty();
+            desc.append(bonusDesc);
+            qualityPoints -= bonus.currentSpend;
+        }
+        if (hasBonusDesc) {
+            desc.append(" NL ");
+        }
+
+        for (Drawback drawback : drawbacks) {
+            if (drawback.description != null) {
+                desc.append(drawback.description).append(" ");
+            }
+        }
+
+        int damage = (int)Math.ceil(qualityPoints / damageOption.qualityPerDmg);
 
         LooterCard card = new LooterCard("Attack", null, 1, desc.toString(),
             AbstractCard.CardType.ATTACK, rarity, targetType.targets
@@ -65,6 +137,14 @@ public class AttackGenerator {
         .setEnemySelectionScheme(targetType.scheme);
 
         card.baseDamage = damage;
+
+        for (Drawback drawback : drawbacks) {
+            drawback.applyToCard(card);
+        }
+
+        for (Bonus bonus : bonuses) {
+            bonus.applyToCard(card);
+        }
 
         return card;
     }

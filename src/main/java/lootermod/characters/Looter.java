@@ -55,7 +55,7 @@ public class Looter extends CustomPlayer {
     public static ArrayList<String> getStartingDeck() {
         ArrayList<String> cards = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 60; i++) {
             cards.add("looter:"+(i+1));
         }
 
