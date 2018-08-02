@@ -1,14 +1,11 @@
 package lootermod.cards.generator;
 
 import com.megacrit.cardcrawl.cards.AbstractCard;
-import com.megacrit.cardcrawl.core.AbstractCreature;
-import com.megacrit.cardcrawl.monsters.AbstractMonster;
-import com.megacrit.cardcrawl.monsters.MonsterGroup;
 import com.megacrit.cardcrawl.random.Random;
+import lootermod.Util;
 import lootermod.cards.DamageType;
 import lootermod.cards.LooterCard;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +16,19 @@ public class AttackGenerator {
         new TargetType(AbstractCard.CardTarget.ENEMY,
                 1.0f, "", null), 60,
         new TargetType(AbstractCard.CardTarget.ALL_ENEMY,0.8f,
-            " to ALL enemies", this::allMonsters), 15,
+            " to ALL enemies", Util::allMonsters), 15,
         new TargetType(AbstractCard.CardTarget.ALL_ENEMY, 1.4f,
-            " to a random enemy", this::randomMonster), 12
+            " to a random enemy", Util::randomMonster), 12,
+        new TargetType(AbstractCard.CardTarget.ALL_ENEMY, 1.3f,
+                " to the first enemy", Util::leftMostEnemy), 8,
+        new TargetType(AbstractCard.CardTarget.ALL_ENEMY, 1.7f,
+                " to uninjured enemies", Util::uninjuredEnemies), 3,
+        new TargetType(AbstractCard.CardTarget.ALL_ENEMY, 1.7f,
+                " to half-dead enemies", Util::halfDead), 2,
+        new TargetType(AbstractCard.CardTarget.ALL_ENEMY, 1.2f,
+                " to attacking enemies", Util::attackingEnemies), 3,
+            new TargetType(AbstractCard.CardTarget.ALL_ENEMY, 1.25f,
+                    " to non-attacking enemies", Util::notAttackingEnemies), 3
     );
 
     private WeightedList<DamageOption> damageOptions = WeightedList.of(
@@ -30,7 +37,8 @@ public class AttackGenerator {
         new DamageOption(DamageType.COLD, 3), 10,
         new DamageOption(DamageType.LIGHTNING, 2.3f), 10,
         new DamageOption(DamageType.PIERCING, 2.2f), 5,
-        new DamageOption(DamageType.POISON, 3.3f), 5
+        new DamageOption(DamageType.POISON, 3.3f), 5,
+        new DamageOption(DamageType.LIFESTEAL, 3.4f), 2
     );
 
     private Map<AbstractCard.CardRarity, Range> qualityPointsByRarity;
@@ -147,22 +155,6 @@ public class AttackGenerator {
         }
 
         return card;
-    }
-
-    private List<AbstractCreature> allMonsters(MonsterGroup monsters) {
-        List<AbstractCreature> list = new ArrayList<>();
-        for (AbstractMonster monster : monsters.monsters) {
-            if (! monster.isDeadOrEscaped()) {
-                list.add(monster);
-            }
-        }
-        return list;
-    }
-
-    private List<AbstractCreature> randomMonster(MonsterGroup monsters) {
-        List<AbstractCreature> list = new ArrayList<>(1);
-        list.add(monsters.getRandomMonster(true));
-        return list;
     }
 
     private class TargetType {

@@ -51,6 +51,8 @@ public class LooterCard extends CustomCard {
         return this;
     }
 
+    public boolean permaRetain = false;
+
     @Override
     public AbstractCard makeCopy() {
         LooterCard copy = new LooterCard(this.cardID, name, null, cost, rawDescription, type, rarity, target);
@@ -62,7 +64,24 @@ public class LooterCard extends CustomCard {
         copy.baseDiscard = this.baseDiscard;
         copy.isEthereal = this.isEthereal;
         copy.exhaust = this.exhaust;
+        copy.permaRetain = this.permaRetain;
         return copy;
+    }
+
+    @Override
+    public void triggerWhenDrawn() {
+        super.triggerWhenDrawn();
+        if (permaRetain) {
+            this.retain = true;
+        }
+    }
+
+    @Override
+    public void atTurnStart() {
+        super.atTurnStart();
+        if (permaRetain) {
+            this.retain = true;
+        }
     }
 
     @Override

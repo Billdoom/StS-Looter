@@ -3,6 +3,7 @@ package lootermod.cards;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
 import com.megacrit.cardcrawl.actions.common.DamageAction;
+import com.megacrit.cardcrawl.actions.unique.VampireDamageAction;
 import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -18,7 +19,8 @@ public enum DamageType {
     FIRE(" Fire", DamageType::fireDamage, "Deals half of the damage as a burn DoT. NL Does not stack."),
     COLD(" Cold", DamageType::coldDamage, "Deals 1/4 of the damage as temporary strength loss"),
     POISON(" Poison", DamageType::poisonDamage, "Applies poison. Stacks half of the damage."),
-    LIGHTNING(" Electrical", DamageType::lightningDamage, "If the enemy has any block, NL deals double damage.");
+    LIGHTNING(" Electrical", DamageType::lightningDamage, "If the enemy has any block, NL deals double damage."),
+    LIFESTEAL(" Lifesteal", DamageType::lifestealDamage, "Gain unblocked damage as health");
 
     public CardEffect effect;
     public String keyword;
@@ -49,7 +51,7 @@ public enum DamageType {
 
         //TODO: create real burn power
         AbstractDungeon.actionManager.addToBottom(
-            new ApplyPowerAction(target, source, new ConstrictedPower(target, source, amount), amount)
+            new ApplyPowerAction(target, source, new ConstrictedPower(target, source, burnDamage), burnDamage)
         );
     }
 
@@ -79,6 +81,12 @@ public enum DamageType {
             amount *= 2;
         }
         dealDamage(source, target, amount, AbstractGameAction.AttackEffect.SMASH);
+    }
+
+    public static void lifestealDamage(AbstractCreature source, AbstractCreature target, LooterCard card) {
+        AbstractDungeon.actionManager.addToBottom(new VampireDamageAction(target,
+                new DamageInfo(source, card.damage, DamageInfo.DamageType.NORMAL),
+                AbstractGameAction.AttackEffect.SLASH_DIAGONAL));
     }
 
     private static void dealDamage(AbstractCreature source, AbstractCreature target, int amount, AbstractGameAction.AttackEffect effect) {

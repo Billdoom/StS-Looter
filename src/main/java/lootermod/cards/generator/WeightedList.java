@@ -21,6 +21,7 @@ public class WeightedList<T> {
         }
     }
 
+    @SafeVarargs
     public WeightedList(WeightedOption... options) {
         this.options = new ArrayList<>();
         for (WeightedOption option : options) {

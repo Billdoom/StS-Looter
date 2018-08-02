@@ -135,7 +135,12 @@ public class Bonus implements CardComponent {
             .describe("Apply !V! Vulnerable.")
             .costPerPoint(12)
             .maxValue(3)
-            .group(MXGroup.VULNERABLE), 20
+            .group(MXGroup.VULNERABLE), 20,
+        new Bonus(15, (card, value) -> card.permaRetain = true)
+            .describe("Retain.")
+            .maxValue(1)
+            .costPerPoint(8)
+            .group(MXGroup.ETHEREAL), 5
     );
 
     public static List<Bonus> getBonuses(AbstractCard.CardType type, int pointsToSpend, Random random,
