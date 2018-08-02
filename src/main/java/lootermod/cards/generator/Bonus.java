@@ -15,6 +15,7 @@ import lootermod.cards.LooterCard;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class Bonus implements CardComponent {
 
@@ -145,11 +146,16 @@ public class Bonus implements CardComponent {
 
     public static List<Bonus> getBonuses(AbstractCard.CardType type, int pointsToSpend, Random random,
                                          List<Drawback> drawbacks) {
+        return getBonuses(type, pointsToSpend, random, drawbacks, b -> true);
+    }
+
+    public static List<Bonus> getBonuses(AbstractCard.CardType type, int pointsToSpend, Random random,
+                                         List<Drawback> drawbacks, Predicate<Bonus> filter) {
         List<Bonus> bonuses = new LinkedList<>();
 
         while (pointsToSpend > 0) {
             final int pointsLeft = pointsToSpend;
-            Bonus newBonus = BONUSES.get(random, b -> {
+            Bonus newBonus = BONUSES.get(random, filter.and(b -> {
                 for (Drawback d : drawbacks) {
                     if (d.mutualExclusionGroup == b.mutualExclusionGroup) {
                         return false;
@@ -163,7 +169,7 @@ public class Bonus implements CardComponent {
                 }
 
                 return b.minQualityPoints <= pointsLeft && b.allowedOnType[type.ordinal()];
-            });
+            }));
             if (null == newBonus) {
                 break;
             }

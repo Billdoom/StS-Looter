@@ -16,5 +16,6 @@ public enum MXGroup {
     WEAK,
     WEAK_SELF,
     VULNERABLE,
-    VULNERABLE_SELF
+    VULNERABLE_SELF,
+    CURSE
 }

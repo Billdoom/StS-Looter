@@ -3,10 +3,12 @@ package lootermod.cards.generator;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
 import com.megacrit.cardcrawl.actions.common.DiscardAction;
 import com.megacrit.cardcrawl.actions.common.LoseHPAction;
+import com.megacrit.cardcrawl.actions.common.MakeTempCardInHandAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.powers.*;
 import com.megacrit.cardcrawl.random.Random;
+import lootermod.Util;
 import lootermod.cards.LooterCard;
 
 import java.util.LinkedList;
@@ -100,7 +102,16 @@ public class Drawback implements CardComponent {
             .group(MXGroup.DRAW_NEXT_TURN), 3,
         new Drawback(16, loseDraw(2))
             .describe("-2 Draw next turn.")
-            .group(MXGroup.DRAW_NEXT_TURN), 2
+            .group(MXGroup.DRAW_NEXT_TURN), 2,
+        new Drawback(10, gainCurse(PileType.HAND))
+            .describe("Gain a curse in hand.")
+            .group(MXGroup.CURSE), 2,
+        new Drawback(15, gainCurse(PileType.DRAW))
+            .describe("Put a curse in your draw pile.")
+            .group(MXGroup.CURSE), 2,
+        new Drawback(8, gainCurse(PileType.DISCARD))
+            .describe("Put a curse in your discard pile.")
+            .group(MXGroup.CURSE), 2
     );
 
     public boolean equals(Object other) {
@@ -173,5 +184,11 @@ public class Drawback implements CardComponent {
             AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(source, source,
                 new DrawDownPower(source, amount), amount))
         );
+    }
+
+    private static CardComponent gainCurse(final PileType pile) {
+        return card -> card.addSelfEffect((source, target, card1) -> {
+            Util.addCardToPile(AbstractDungeon.returnRandomCurse().makeStatEquivalentCopy(), pile);
+        });
     }
 }

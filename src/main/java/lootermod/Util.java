@@ -1,8 +1,12 @@
 package lootermod;
 
+import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.AbstractCreature;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.MonsterGroup;
+import com.megacrit.cardcrawl.vfx.cardManip.ShowCardBrieflyEffect;
+import lootermod.cards.generator.PileType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,5 +70,10 @@ public class Util {
                 .filter(m -> ! m.isDeadOrEscaped())
                 .filter(filter)
                 .collect(Collectors.toList());
+    }
+
+    public static void addCardToPile(AbstractCard card, PileType pile) {
+        AbstractDungeon.effectsQueue.add(new ShowCardBrieflyEffect(card.makeStatEquivalentCopy()));
+        pile.get().addToRandomSpot(card);
     }
 }

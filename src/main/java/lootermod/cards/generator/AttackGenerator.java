@@ -27,8 +27,8 @@ public class AttackGenerator {
                 " to half-dead enemies", Util::halfDead), 2,
         new TargetType(AbstractCard.CardTarget.ALL_ENEMY, 1.2f,
                 " to attacking enemies", Util::attackingEnemies), 3,
-            new TargetType(AbstractCard.CardTarget.ALL_ENEMY, 1.25f,
-                    " to non-attacking enemies", Util::notAttackingEnemies), 3
+        new TargetType(AbstractCard.CardTarget.ALL_ENEMY, 1.25f,
+                " to non-attacking enemies", Util::notAttackingEnemies), 3
     );
 
     private WeightedList<DamageOption> damageOptions = WeightedList.of(
@@ -38,7 +38,7 @@ public class AttackGenerator {
         new DamageOption(DamageType.LIGHTNING, 2.3f), 10,
         new DamageOption(DamageType.PIERCING, 2.2f), 5,
         new DamageOption(DamageType.POISON, 3.3f), 5,
-        new DamageOption(DamageType.LIFESTEAL, 3.4f), 2
+        new DamageOption(DamageType.LIFESTEAL, 4.0f), 2
     );
 
     private Map<AbstractCard.CardRarity, Range> qualityPointsByRarity;
